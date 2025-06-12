@@ -5,6 +5,10 @@ on:
     branches:
       - main
 
+# 明示的に書き込み権限を付与
+permissions:
+  contents: write
+
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
