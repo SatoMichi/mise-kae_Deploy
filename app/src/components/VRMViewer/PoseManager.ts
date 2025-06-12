@@ -98,7 +98,6 @@ export class PoseManager {
         rightFoot: { rotation: [0, 0, 0, 1], position: [0, 0, 0] },
         // 指の関節
         leftThumbProximal: { rotation: [0, 0, 0, 1], position: [0, 0, 0] },
-        leftThumbIntermediate: { rotation: [0, 0, 0, 1], position: [0, 0, 0] },
         leftThumbDistal: { rotation: [0, 0, 0, 1], position: [0, 0, 0] },
         leftIndexProximal: { rotation: [0, 0, 0, 1], position: [0, 0, 0] },
         leftIndexIntermediate: { rotation: [0, 0, 0, 1], position: [0, 0, 0] },
@@ -113,7 +112,6 @@ export class PoseManager {
         leftLittleIntermediate: { rotation: [0, 0, 0, 1], position: [0, 0, 0] },
         leftLittleDistal: { rotation: [0, 0, 0, 1], position: [0, 0, 0] },
         rightThumbProximal: { rotation: [0, 0, 0, 1], position: [0, 0, 0] },
-        rightThumbIntermediate: { rotation: [0, 0, 0, 1], position: [0, 0, 0] },
         rightThumbDistal: { rotation: [0, 0, 0, 1], position: [0, 0, 0] },
         rightIndexProximal: { rotation: [0, 0, 0, 1], position: [0, 0, 0] },
         rightIndexIntermediate: { rotation: [0, 0, 0, 1], position: [0, 0, 0] },
@@ -226,19 +224,11 @@ export class PoseManager {
       console.log('ポーズを名前で見つけました:', {
         key,
         name: pose.name,
-        description: pose.description,
-        leftUpperArm: pose.pose.leftUpperArm?.rotation,
-        rightUpperArm: pose.pose.rightUpperArm?.rotation
+        description: pose.description
       });
       this.applyPose(pose.pose);
     } else {
-      console.error('ポーズが見つかりません:', name, {
-        availablePoses: Object.entries(this.poses).map(([key, pose]) => ({
-          key,
-          name: pose.name,
-          description: pose.description
-        }))
-      });
+      console.error('ポーズが見つかりません:', name);
     }
   }
 
@@ -253,8 +243,11 @@ export class PoseManager {
    * 現在のポーズを保存します
    */
   public savePose(name: string, description: string = '') {
-    if (!this.currentPose) return;
-    
+    if (!this.currentPose) {
+      console.error('現在のポーズが存在しません');
+      return;
+    }
+
     this.poses[name] = {
       name,
       description,
@@ -268,35 +261,36 @@ export class PoseManager {
   public interpolatePose(from: VRMPose, to: VRMPose, t: number): VRMPose {
     const result: VRMPose = {};
 
-    // すべてのボーンに対して補間を実行
+    // 全てのボーンに対して補間を実行
     Object.keys(from).forEach((boneName) => {
-      const fromBone = from[boneName as keyof VRMPose];
-      const toBone = to[boneName as keyof VRMPose];
+      const fromTransform = from[boneName as keyof VRMPose];
+      const toTransform = to[boneName as keyof VRMPose];
 
-      if (fromBone && toBone) {
-        // 回転の補間（クォータニオン）
-        const fromRotation = fromBone.rotation;
-        const toRotation = toBone.rotation;
-        const interpolatedRotation = [
-          fromRotation[0] + (toRotation[0] - fromRotation[0]) * t,
-          fromRotation[1] + (toRotation[1] - fromRotation[1]) * t,
-          fromRotation[2] + (toRotation[2] - fromRotation[2]) * t,
-          fromRotation[3] + (toRotation[3] - fromRotation[3]) * t
-        ];
+      if (fromTransform && toTransform) {
+        const fromRotation = fromTransform.rotation;
+        const toRotation = toTransform.rotation;
+        const fromPosition = fromTransform.position;
+        const toPosition = toTransform.position;
 
-        // 位置の補間（線形）
-        const fromPosition = fromBone.position;
-        const toPosition = toBone.position;
-        const interpolatedPosition = [
-          fromPosition[0] + (toPosition[0] - fromPosition[0]) * t,
-          fromPosition[1] + (toPosition[1] - fromPosition[1]) * t,
-          fromPosition[2] + (toPosition[2] - fromPosition[2]) * t
-        ];
+        if (fromRotation && toRotation && fromPosition && toPosition) {
+          const interpolatedRotation: [number, number, number, number] = [
+            fromRotation[0] + (toRotation[0] - fromRotation[0]) * t,
+            fromRotation[1] + (toRotation[1] - fromRotation[1]) * t,
+            fromRotation[2] + (toRotation[2] - fromRotation[2]) * t,
+            fromRotation[3] + (toRotation[3] - fromRotation[3]) * t
+          ];
 
-        result[boneName as keyof VRMPose] = {
-          rotation: interpolatedRotation,
-          position: interpolatedPosition
-        };
+          const interpolatedPosition: [number, number, number] = [
+            fromPosition[0] + (toPosition[0] - fromPosition[0]) * t,
+            fromPosition[1] + (toPosition[1] - fromPosition[1]) * t,
+            fromPosition[2] + (toPosition[2] - fromPosition[2]) * t
+          ];
+
+          result[boneName as keyof VRMPose] = {
+            rotation: interpolatedRotation,
+            position: interpolatedPosition
+          };
+        }
       }
     });
 
@@ -314,6 +308,8 @@ export class PoseManager {
    * 保存されたポーズを削除します
    */
   public deletePose(name: string) {
-    delete this.poses[name];
+    if (this.poses[name]) {
+      delete this.poses[name];
+    }
   }
 } 

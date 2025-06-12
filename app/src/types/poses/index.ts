@@ -1,19 +1,33 @@
 import { VRMPose } from '@pixiv/three-vrm';
 
 export interface PoseDefinition {
-  [key: string]: {
-    rotation: [number, number, number, number];
-    position: [number, number, number];
-  };
+  name: string;
+  description: string;
+  pose: VRMPose;
 }
 
 export const DefaultPoses: { [key: string]: PoseDefinition } = {
   // プリセットポーズの定義
   peace: {
-    // ピースポーズの定義
+    name: 'ピース',
+    description: '右手でピースサイン、左手を腰に当てる',
+    pose: {
+      // ピースポーズの定義
+      rightIndexProximal: { rotation: [0, 0, 0.5, 0.866], position: [0, 0, 0] },
+      rightMiddleProximal: { rotation: [0, 0, 0.5, 0.866], position: [0, 0, 0] },
+      rightRingProximal: { rotation: [0, 0, 0, 1], position: [0, 0, 0] },
+      rightLittleProximal: { rotation: [0, 0, 0, 1], position: [0, 0, 0] },
+      rightThumbProximal: { rotation: [0, 0, 0, 1], position: [0, 0, 0] },
+      leftUpperArm: { rotation: [0, 0, 0, 1], position: [0, 0, 0] }
+    }
   },
   hi: {
-    // 手を振るポーズの定義
+    name: 'ハイ',
+    description: '手を振るポーズ',
+    pose: {
+      rightUpperArm: { rotation: [0, 0, 0.5, 0.866], position: [0, 0, 0] },
+      rightLowerArm: { rotation: [0, 0, 0.5, 0.866], position: [0, 0, 0] }
+    }
   }
 };
 

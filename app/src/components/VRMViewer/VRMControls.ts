@@ -3,6 +3,8 @@ import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader.js';
 import { VRM } from '@pixiv/three-vrm';
 import { ClothingManagerProps } from '../../types/vrm';
+import { GLTF } from 'three/addons/loaders/GLTFLoader.js';
+import { VRMLoaderPlugin } from '@pixiv/three-vrm';
 
 export class ClothingManager {
   private vrm: VRM | null = null;
@@ -121,7 +123,11 @@ export class ClothingManager {
       } else {
         // GLTF/GLBファイルの読み込み
         const loader = new GLTFLoader();
-        const gltf = await new Promise<THREE.GLTF>((resolve, reject) => {
+        loader.register((parser) => {
+          return new VRMLoaderPlugin(parser);
+        });
+
+        const gltf = await new Promise<GLTF>((resolve, reject) => {
           loader.load(
             clothingPath,
             (gltf) => resolve(gltf),
@@ -131,18 +137,26 @@ export class ClothingManager {
         });
 
         clothingMesh = gltf.scene.children.find(
-          (child) => child instanceof THREE.SkinnedMesh
+          (child: THREE.Object3D) => child instanceof THREE.SkinnedMesh
         ) as THREE.SkinnedMesh;
 
         if (!clothingMesh) {
           throw new Error('GLTFモデルにSkinnedMeshが見つかりません');
         }
+
+        // VRMモデルの取得
+        this.vrm = gltf.userData.vrm as VRM;
+        if (!this.vrm) {
+          throw new Error('VRMデータが見つかりません');
+        }
       }
 
-      // VRMモデルの取得
-      this.vrm = this.props.vrm;
+      // VRMモデルの取得（FBXの場合）
       if (!this.vrm) {
-        throw new Error('VRMモデルが設定されていません');
+        this.vrm = this.props.vrm;
+        if (!this.vrm) {
+          throw new Error('VRMモデルが設定されていません');
+        }
       }
 
       // ボーンのマッピング
@@ -215,7 +229,7 @@ export class ClothingManager {
         // @ts-ignore: VRMの型定義が不完全なため
         const vrmBone = humanoid.getBoneNode(vrmBoneName);
         if (vrmBone) {
-          newBones.push(vrmBone);
+          newBones.push(vrmBone as THREE.Bone);
           boneNameMap[bone.name] = index;
         }
       }

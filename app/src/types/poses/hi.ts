@@ -26,9 +26,7 @@ export const HiPose: VRMPose = {
   rightHand: { rotation: [0, 0, 0, 1], position: [0, 0, 0] },
 
   // 左手指（自然な状態）
-  leftThumbMetacarpal: { rotation: [0, 0, 0, 1], position: [0, 0, 0] },
   leftThumbProximal: { rotation: [0, 0, 0, 1], position: [0, 0, 0] },
-  leftThumbIntermediate: { rotation: [0, 0, 0, 1], position: [0, 0, 0] },
   leftThumbDistal: { rotation: [0, 0, 0, 1], position: [0, 0, 0] },
   leftIndexProximal: { rotation: [0, 0, 0, 1], position: [0, 0, 0] },
   leftIndexIntermediate: { rotation: [0, 0, 0, 1], position: [0, 0, 0] },
@@ -44,9 +42,7 @@ export const HiPose: VRMPose = {
   leftLittleDistal: { rotation: [0, 0, 0, 1], position: [0, 0, 0] },
 
   // 右手指（自然な状態）
-  rightThumbMetacarpal: { rotation: [0, 0, 0, 1], position: [0, 0, 0] },
   rightThumbProximal: { rotation: [0, 0, 0, 1], position: [0, 0, 0] },
-  rightThumbIntermediate: { rotation: [0, 0, 0, 1], position: [0, 0, 0] },
   rightThumbDistal: { rotation: [0, 0, 0, 1], position: [0, 0, 0] },
   rightIndexProximal: { rotation: [0, 0, 0, 1], position: [0, 0, 0] },
   rightIndexIntermediate: { rotation: [0, 0, 0, 1], position: [0, 0, 0] },
@@ -65,11 +61,9 @@ export const HiPose: VRMPose = {
   leftUpperLeg: { rotation: [0, 0, 0, 1], position: [0, 0, 0] },
   leftLowerLeg: { rotation: [0, 0, 0, 1], position: [0, 0, 0] },
   leftFoot: { rotation: [0, 0, 0, 1], position: [0, 0, 0] },
-  leftToes: { rotation: [0, 0, 0, 1], position: [0, 0, 0] },
   rightUpperLeg: { rotation: [0, 0, 0, 1], position: [0, 0, 0] },
   rightLowerLeg: { rotation: [0, 0, 0, 1], position: [0, 0, 0] },
   rightFoot: { rotation: [0, 0, 0, 1], position: [0, 0, 0] },
-  rightToes: { rotation: [0, 0, 0, 1], position: [0, 0, 0] },
 
   // 目（動かさない）
   leftEye: { rotation: [0, 0, 0, 1], position: [0, 0, 0] },

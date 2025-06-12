@@ -3,8 +3,8 @@ import { VRMPose } from '@pixiv/three-vrm';
 import { PoseConverter } from '../../utils/PoseConverter';
 
 export class PoseUploader {
-  private container: HTMLDivElement;
-  private fileInput: HTMLInputElement;
+  private container!: HTMLDivElement;
+  private fileInput!: HTMLInputElement;
 
   constructor(private poseManager: PoseManager) {
     this.setupUI();

@@ -2,8 +2,8 @@ import { PoseManager } from './PoseManager';
 import { PoseDefinition } from '../../types/poses/index';
 
 export class PoseControls {
-  private container: HTMLDivElement;
-  private poseSelect: HTMLSelectElement;
+  private container!: HTMLDivElement;
+  private poseSelect!: HTMLSelectElement;
 
   constructor(private poseManager: PoseManager) {
     this.setupUI();
@@ -79,8 +79,8 @@ export class PoseControls {
     console.log('利用可能なポーズ:', poses);
     poses.forEach((pose: PoseDefinition) => {
       const option = document.createElement('option');
-      option.value = pose.name;  // 表示名をそのまま使用
-      option.textContent = pose.name;  // 表示名をそのまま使用
+      option.value = pose.name;
+      option.textContent = pose.name;
       this.poseSelect.appendChild(option);
     });
   }

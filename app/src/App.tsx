@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { VRM, VRMLoaderPlugin } from '@pixiv/three-vrm';
-import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { PosePanel } from './components/PosePanel';
 import { PoseDefinition } from './utils/PoseFileManager';
 
@@ -81,23 +81,29 @@ export default function App() {
   useEffect(() => {
     if (!scene || !camera || !renderer) return;
 
-    const loader = new GLTFLoader();
-    loader.registerPlugin(new VRMLoaderPlugin());
-    loader.load(
-      '/assets/models/Sumisumi_VRM.vrm',
-      (gltf) => {
-        const vrm = gltf.userData.vrm;
+    const loadVRM = async (url: string) => {
+      try {
+        const loader = new GLTFLoader();
+        loader.register((parser) => {
+          return new VRMLoaderPlugin(parser);
+        });
+
+        const gltf = await loader.loadAsync(url);
+        const vrm = gltf.userData.vrm as VRM;
+
+        if (!vrm) {
+          throw new Error('VRMデータが見つかりません');
+        }
+
         scene.add(vrm.scene);
         vrm.scene.position.set(0, 0, 0);
         setVrm(vrm);
-      },
-      (progress) => {
-        console.log('Loading model...', (progress.loaded / progress.total) * 100);
-      },
-      (error) => {
-        console.error(error);
+      } catch (error) {
+        console.error('VRMの読み込みに失敗:', error);
       }
-    );
+    };
+
+    loadVRM('/assets/models/Sumisumi_VRM.vrm');
   }, [scene, camera, renderer]);
 
   // アニメーションループ
